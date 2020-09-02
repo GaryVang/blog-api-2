@@ -84,7 +84,7 @@ const sessionChecker = (req, res, next) => {
   }
 };
 
-app.get("/", Controller.getInitial(db));
+app.get("/", Controller.getInitial(db, pgp));
 // app.get("/", sessionChecker, (req, res) => {
 //   // res.json('Hello World');
 //   if (req.session.user) {
@@ -116,9 +116,11 @@ app.put("/register", Controller.registerUser(db, bcrypt, saltRounds));
 app.post("/signin", Controller.signInUser(db, bcrypt));
 
 app.get("/getPosts", Controller.getPosts(db));
-app.get("/getPosts/:page", sessionChecker, Controller.getPosts(db));
+app.get("/getPosts/:page", sessionChecker, Controller.getPosts(db, pgp));
 
 app.put("/submitPost", Controller.submitPost(db));
+
+app.get("/user/:user", Controller.getUser(db));
 
 app.get("/logout", (req, res, next) => {
   // res.clearCookie('user_sid', {path: '/'});

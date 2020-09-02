@@ -1,13 +1,25 @@
-const getInitial = (db) => async (req, res) => {
+
+const getInitial = (db, pgp) => async (req, res) => {
   let postCount;
   let postList;
   const OFFSET = 5 * (req.params.page - 1) || 0;
 
+  // console.log('query: ', req.query);
+
+  let where = "";
+  let whereCount = "";
+  if(req.query.username){
+    // console.log('there a query: ', req.query.username);
+    where =  pgp.as.format('WHERE username=$1', [req.query.username]);
+    whereCount = pgp.as.format('INNER JOIN users ON posts.user_id=users.user_id WHERE username=$1', [req.query.username]);
+  } else {
+    console.log('no query');
+  }
+
   await db
-    .one("SELECT count(*)  FROM posts")
+    .one("SELECT count(post_id) FROM posts $1:raw", [whereCount])
     .then((result) => {
       postCount = parseInt(result.count);
-      // res.status(200).json(parseInt(result.count));
     })
     .catch((error) => {
       console.log("Error: ", error);
@@ -15,13 +27,15 @@ const getInitial = (db) => async (req, res) => {
       postCount = 0;
     });
 
-  await db.many(
-    "SELECT username, post_id, title, body, to_char(post_date, $3) as post_date FROM posts INNER JOIN users ON posts.user_id=users.user_id ORDER BY post_date desc LIMIT 5 OFFSET $1",
-    [OFFSET, "second", "YYYY-MM-DD HH12:MI:SS AM (TZ)"]
+    // (req.query ? `${arg1}=${val1}`: "")
+
+  await db.any(
+    "SELECT username, post_id, title, body, to_char(post_date, $3) as post_date FROM posts INNER JOIN users ON posts.user_id=users.user_id $4:raw ORDER BY post_date desc LIMIT 5 OFFSET $1",
+    [OFFSET, "second", "YYYY-MM-DD HH12:MI:SS AM (TZ)", where]
   )
     .then((result) => {
       postList = result;
-    //   res.status(200).json({ status: true, data: result });
+    //   res.status(200).json( { status: true, data: result });
     })
     .catch((error) => {
       // error;
@@ -139,8 +153,19 @@ const signInUser = (db, bcrypt) => (req, res) => {
     });
 };
 
-const getPosts = (db) => (req, res) => {
+const getPosts = (db, pgp) => (req, res) => {
   console.log("User: ", req.session.user);
+  // console.log('gP query: ', req.query);
+
+  let where = "";
+  // let where =  pgp.as.format('WHERE username=$1', ['bartsimpson']);
+  if(req.query.username){
+    // console.log('there a query: ', req.query.username);
+    where =  pgp.as.format('WHERE username=$1', [req.query.username]);
+  } else {
+    console.log('no query');
+  }
+
   // const OFFSET = req.body.offset;
   const OFFSET = 5 * (req.params.page - 1) || 0;
   // const PAGE = req.params.page - 1;
@@ -162,8 +187,8 @@ const getPosts = (db) => (req, res) => {
   // });
 
   db.many(
-    "SELECT username, post_id, title, body, to_char(post_date, $3) as post_date FROM posts INNER JOIN users ON posts.user_id=users.user_id ORDER BY post_date desc LIMIT 5 OFFSET $1",
-    [OFFSET, "second", "YYYY-MM-DD HH12:MI:SS AM (TZ)"]
+    "SELECT username, post_id, title, body, to_char(post_date, $3) as post_date FROM posts INNER JOIN users ON posts.user_id=users.user_id $4:raw ORDER BY post_date desc LIMIT 5 OFFSET $1",
+    [OFFSET, "second", "YYYY-MM-DD HH12:MI:SS AM (TZ)", where]
   )
     .then((result) => {
       // console.log(result);
@@ -240,6 +265,27 @@ const getMaxPostCount = (db) => (req, res) => {
     });
 };
 
+const getUser = (db) => (req, res) => {
+
+  // const OFFSET = 5 * (req.params.user - 1) || 0;
+  const USERNAME = req.params.user;
+
+  //returns null on fail
+  db.oneOrNone("SELECT username, to_char(join_date, $2) as join_date, count(posts.post_id) as posts FROM users LEFT JOIN posts ON posts.user_id=users.user_id WHERE users.username = $1 GROUP BY username, join_date", [USERNAME, "YYYY-MM-DD HH12:MI:SS AM (TZ)"])
+  .then(result => res.status(200).json(result))
+  // .then(result => console.log(result))
+  .catch((error) => {
+    // error;
+    console.log("Error: ", error);
+    res
+      .status(400)
+      // .json({ status: false, comment: "Error: No blog posts retrieved" });
+      .json(null);
+  });
+
+  // res.status(200).json('Get User Successful');
+};
+
 module.exports = {
   getInitial,
   registerUser,
@@ -247,4 +293,5 @@ module.exports = {
   getPosts,
   submitPost,
   getMaxPostCount,
+  getUser
 };
