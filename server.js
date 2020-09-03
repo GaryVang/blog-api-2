@@ -100,7 +100,7 @@ app.get("/", Controller.getInitial(db, pgp));
 app.get("/auth", (req, res) => {
   if (req.session.user) {
     // console.log("today: ", req.session.user);
-    res.status(200).json({ username: req.session.user });
+    res.status(200).json({ username: req.session.user, user_id: req.session.user_id });
   } else {
     // res.clearCookie('user_sid');
     // next();

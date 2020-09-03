@@ -128,6 +128,7 @@ const signInUser = (db, bcrypt) => (req, res) => {
           // console.log('inside: ', req.session);
           // req.session.user = 'bart1112';
           req.session.user = USERNAME;
+          req.session.user_id = qResult.user_id;
 
           res
             .status(200)
@@ -162,6 +163,8 @@ const getPosts = (db, pgp) => (req, res) => {
   if(req.query.username){
     // console.log('there a query: ', req.query.username);
     where =  pgp.as.format('WHERE username=$1', [req.query.username]);
+    // console.log('where: ', where);
+    // console.log('typeof: ', typeof req.query.username);
   } else {
     console.log('no query');
   }
