@@ -34,14 +34,19 @@ app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 //     next();
 // });
 
+const store = new pgSession({
+  pgPromise: db,
+});
+
 app.use(
   session({
-    store: new pgSession({
-      pgPromise: db,
-      // tableName: 'user_sessions'
-    }),
+    // store: new pgSession({
+    //   pgPromise: db,
+    //   // tableName: 'user_sessions'
+    // }),
+    store,
     // name: '_somecookie',
-    key: "user_sid",
+    name: "user_sid",
     secret: "catdog",
     saveUninitialized: false,
     resave: false,
@@ -70,41 +75,95 @@ const NODE_ENV = process.env.NODE_ENV || "development";
 const DB_PASSWORD = process.env["DB_PASSWORD"];
 
 const sessionChecker = (req, res, next) => {
-  if (req.session.user && req.headers.cookie.includes("user_sid")) {
-    // if (req.session.user && req.session.cookie.user_sid) {
-    // if (req.session.user) {
-    // res.redirect('/dashboard');
-    console.log("today: ", req.session.user);
-    // res.status(200).json({username: req.session.user});
-    next();
+  if (req.session.user && req.sessionID) {
+    store.get(req.sessionID, (err, session) => {
+      if (session) {
+        next();
+      } else if (!session) {
+        res.clearCookie("user_sid");
+        req.session.destroy(function (err) {
+          if (err) {
+            console.log(err);
+          } else {
+            res.status(400).json({ status: false, comment: "Invalid Session" });
+          }
+        });
+      } else {
+        console.log("Auth Error: ", err);
+        res.clearCookie("user_sid");
+        req.session.destroy(function (err) {
+          if (err) {
+            console.log(err);
+          } else {
+            res.status(400).json({ status: false, comment: "Auth Error" });
+          }
+        });
+      }
+    });
   } else {
-    // console.log('req.session.cookie: ',  req.headers.cookie.split('='));
-    // console.log('req.session.cookie: ',  req.headers.cookie.includes('user_sid'));
-    next();
+    res.clearCookie("user_sid");
+    req.session.destroy(function (err) {
+      if (err) {
+        console.log(err);
+      } else {
+        res
+          .status(400)
+          .json({ status: false, comment: "Please Sign In Again" });
+      }
+    });
   }
 };
 
+const deleteCookieSession = (res, req) => {
+  res.clearCookie("user_sid");
+  req.session.destroy(function (err) {
+    if (err) {
+      console.log(err);
+    } else {
+      // res.status(400).json("Invalid Session");
+    }
+  });
+};
+
 app.get("/", Controller.getInitial(db, pgp));
-// app.get("/", sessionChecker, (req, res) => {
-//   // res.json('Hello World');
-//   if (req.session.user) {
-//     console.log("today: ", req.session.user);
-//     res.status(200).json({ username: req.session.user });
-//   } else {
-//     // res.clearCookie('user_sid');
-//     // next();
-//     res.status(400).json("No Valid Login");
-//   }
-// });
 
 app.get("/auth", (req, res) => {
-  if (req.session.user) {
-    // console.log("today: ", req.session.user);
-    res.status(200).json({ username: req.session.user, user_id: req.session.user_id });
+  if (req.session.user && req.sessionID) {
+    store.get(req.sessionID, (err, session) => {
+      if (session) {
+        res
+          .status(200)
+          .json({ username: req.session.user, user_id: req.session.user_id });
+      } else if (!session) {
+        res.clearCookie("user_sid");
+        req.session.destroy(function (err) {
+          if (err) {
+            console.log(err);
+          } else {
+            res.status(400).json("Invalid Session");
+          }
+        });
+      } else {
+        console.log("Auth Error: ", err);
+        res.clearCookie("user_sid");
+        req.session.destroy(function (err) {
+          if (err) {
+            console.log(err);
+          } else {
+            res.status(400).json("Auth Error");
+          }
+        });
+      }
+    });
   } else {
-    // res.clearCookie('user_sid');
-    // next();
-    res.status(400).json("No Valid Session");
+    res.clearCookie("user_sid");
+    req.session.destroy(function (err) {
+      if (err) {
+        console.log(err);
+      } else {
+        res.status(400).json("No Login Detected");
+      }
+    });
   }
 });
 
@@ -116,17 +175,16 @@ app.put("/register", Controller.registerUser(db, bcrypt, saltRounds));
 app.post("/signin", Controller.signInUser(db, bcrypt));
 
 app.get("/getPosts", Controller.getPosts(db));
-app.get("/getPosts/:page", sessionChecker, Controller.getPosts(db, pgp));
+app.get("/getPosts/:page", Controller.getPosts(db, pgp));
 
-app.put("/submitPost", Controller.submitPost(db));
+app.put("/submitPost", sessionChecker, Controller.submitPost(db));
 
 app.get("/user/:user", Controller.getUser(db));
 
 app.get("/logout", (req, res, next) => {
   // res.clearCookie('user_sid', {path: '/'});
-  // console.log('logout user: ', req.session.user);
   res.clearCookie("user_sid");
-  // console.log('2logout user: ', req.sessionID);
+
   if (req.session.user) {
     // res.clearCookie('user_sid', {domain: '127.0.0.1', path: '/'});
     req.session.destroy(function (err) {
@@ -137,8 +195,6 @@ app.get("/logout", (req, res, next) => {
         // res.clearCookie('user_sid', {domain: 'localhost:3000', path: '/'});
       }
     });
-    // console.log('destroy: ', req.session);
-    // res.redirect('/');
   } else {
     // res.redirect('/login');
   }
