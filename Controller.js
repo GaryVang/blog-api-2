@@ -29,6 +29,8 @@ const getInitial = (db, pgp) => async (req, res) => {
 
     // (req.query ? `${arg1}=${val1}`: "")
 
+    //Order by post_date error
+    // HH12 does not order correctly: 12AM > 1AM
   await db.any(
     "SELECT username, post_id, title, body, to_char(post_date, $3) as post_date FROM posts INNER JOIN users ON posts.user_id=users.user_id $4:raw ORDER BY post_date desc LIMIT 5 OFFSET $1",
     [OFFSET, "second", "YYYY-MM-DD HH12:MI:SS AM (TZ)", where]
