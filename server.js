@@ -24,8 +24,8 @@ app.use(cors({ credentials: true, origin: "https://blog-frontend-1.herokuapp.com
 const store = new pgSession({
   pgPromise: db,
 });
-app.set('trust proxy', 1);
-app.enable('trust proxy');
+// app.set('trust proxy', 1);
+// app.enable('trust proxy');
 app.use(
   session({
     // store: new pgSession({
@@ -39,7 +39,7 @@ app.use(
     resave: false,
     proxy: true,
     cookie: {
-      secure: true,
+      // secure: true,
       // sameSite: 'none',
       httpOnly: true,
       maxAge: 15 * 60 * 1000, // 15 minutes: min * second * millisecond
