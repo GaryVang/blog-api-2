@@ -36,7 +36,7 @@ app.use(
     store,
     name: "user_sid",
     secret: "catdog",
-    saveUninitialized: false,
+    saveUninitialized: true,
     resave: false,
     proxy: true,
     cookie: {
