@@ -39,6 +39,7 @@ app.use(
     resave: false,
     proxy: true,
     cookie: {
+      path: "/",
       secure: true,
       // sameSite: 'none',
       httpOnly: true,
