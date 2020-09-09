@@ -33,7 +33,7 @@ app.use(
     //   // tableName: 'user_sessions'
     // }),
     store,
-    key: "user_sid",
+    name: "user_sid",
     secret: "catdog",
     saveUninitialized: false,
     resave: false,
