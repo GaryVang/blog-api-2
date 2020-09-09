@@ -21,10 +21,21 @@ app.use(bodyParser.json());
 // app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 app.use(cors({ credentials: true, origin: "https://blog-frontend-1.herokuapp.com"  }));
 
+
+app.all('*', function(req, res, next) {
+
+  res.setHeader("Access-Control-Allow-Origin", "https://blog-frontend-1.herokuapp.com");
+  res.setHeader("Access-Control-Allow-Headers", "X-Requested-With");
+  res.setHeader("Access-Control-Allow-Credentials", true);
+  next();
+});
+
+
+
 const store = new pgSession({
   pgPromise: db,
 });
-// app.set('trust proxy', 1);
+app.set('trust proxy', 1);
 // app.enable('trust proxy');
 app.use(
   session({
