@@ -19,7 +19,7 @@ const app = express();
 
 app.use(bodyParser.json());
 // app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
-app.use(cors({ credentials: true }));
+app.use(cors({ credentials: true, origin: "https://blog-frontend-1.herokuapp.com/"  }));
 
 const store = new pgSession({
   pgPromise: db,
