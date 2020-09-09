@@ -18,7 +18,8 @@ const db = pgp(process.env.DATABASE_URL);
 const app = express();
 
 app.use(bodyParser.json());
-app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+// app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+app.use(cors({ credentials: true }));
 
 const store = new pgSession({
   pgPromise: db,
