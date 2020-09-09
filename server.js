@@ -42,7 +42,7 @@ app.use(
     cookie: {
       path: "/",
       secure: true,
-      sameSite: none,
+      sameSite: 'none',
       // sameSite: 'none',
       httpOnly: true,
       maxAge: 15 * 60 * 1000, // 15 minutes: min * second * millisecond
