@@ -22,16 +22,6 @@ app.use(bodyParser.json());
 app.use(cors({ credentials: true, origin: "https://blog-frontend-1.herokuapp.com"  }));
 
 
-app.all('*', function(req, res, next) {
-
-  res.setHeader("Access-Control-Allow-Origin", "https://blog-frontend-1.herokuapp.com");
-  res.setHeader("Access-Control-Allow-Headers", "X-Requested-With");
-  res.setHeader("Access-Control-Allow-Credentials", true);
-  next();
-});
-
-
-
 const store = new pgSession({
   pgPromise: db,
 });
@@ -52,6 +42,7 @@ app.use(
     cookie: {
       path: "/",
       secure: true,
+      sameSite: none,
       // sameSite: 'none',
       httpOnly: true,
       maxAge: 15 * 60 * 1000, // 15 minutes: min * second * millisecond
