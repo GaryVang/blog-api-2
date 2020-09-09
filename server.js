@@ -41,7 +41,7 @@ app.use(
     cookie: {
       secure: true,
       // sameSite: 'none',
-      httpOnly: false,
+      httpOnly: true,
       maxAge: 15 * 60 * 1000, // 15 minutes: min * second * millisecond
     },
   })
