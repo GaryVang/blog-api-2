@@ -19,12 +19,13 @@ const app = express();
 
 app.use(bodyParser.json());
 // app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
-app.use(cors({ credentials: true, origin: "https://blog-frontend-1.herokuapp.com/"  }));
+app.use(cors({ credentials: true, origin: "https://blog-frontend-1.herokuapp.com"  }));
 
 const store = new pgSession({
   pgPromise: db,
 });
 app.set('trust proxy', 1);
+app.enable('trust proxy');
 app.use(
   session({
     // store: new pgSession({
@@ -32,13 +33,13 @@ app.use(
     //   // tableName: 'user_sessions'
     // }),
     store,
-    name: "user_sid",
+    key: "user_sid",
     secret: "catdog",
     saveUninitialized: false,
     resave: false,
     proxy: true,
     cookie: {
-      secure: false,
+      secure: true,
       // sameSite: 'none',
       httpOnly: false,
       maxAge: 15 * 60 * 1000, // 15 minutes: min * second * millisecond
