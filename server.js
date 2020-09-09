@@ -36,6 +36,7 @@ app.use(
     secret: "catdog",
     saveUninitialized: false,
     resave: false,
+    proxy: true,
     cookie: {
       secure: false,
       // sameSite: 'none',
