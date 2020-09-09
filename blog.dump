@@ -1,0 +1,284 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 11.5
+-- Dumped by pg_dump version 11.5
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: posts; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.posts (
+    post_id integer NOT NULL,
+    title character varying NOT NULL,
+    body text NOT NULL,
+    post_date timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    user_id integer NOT NULL
+);
+
+
+--
+-- Name: posts_post_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.posts_post_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: posts_post_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.posts_post_id_seq OWNED BY public.posts.post_id;
+
+
+--
+-- Name: session; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.session (
+    sid character varying NOT NULL,
+    sess json NOT NULL,
+    expire timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.users (
+    user_id integer NOT NULL,
+    username character varying(20) NOT NULL,
+    password character varying NOT NULL,
+    join_date timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    flag_writer boolean DEFAULT true,
+    flag_admin boolean DEFAULT false,
+    CONSTRAINT users_username_check CHECK ((char_length((username)::text) > 6))
+);
+
+
+--
+-- Name: users_user_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.users_user_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: users_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.users_user_id_seq OWNED BY public.users.user_id;
+
+
+--
+-- Name: posts post_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.posts ALTER COLUMN post_id SET DEFAULT nextval('public.posts_post_id_seq'::regclass);
+
+
+--
+-- Name: users user_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN user_id SET DEFAULT nextval('public.users_user_id_seq'::regclass);
+
+
+--
+-- Data for Name: posts; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.posts (post_id, title, body, post_date, user_id) FROM stdin;
+1	123		2020-02-05 18:08:21.420816-08	19
+2	123	superman	2020-02-05 18:11:03.412882-08	19
+3	123	superman	2020-02-05 18:11:34.40429-08	19
+5	1st Post	1 This is obviously the first post.	2020-08-03 23:33:01.193477-07	37
+6	2st Post	2 This is obviously the first post.	2020-08-03 23:33:26.011258-07	37
+7	2st Post	2 This is obviously the first post.	2020-08-03 23:34:36.619014-07	37
+8	2st Post	2 This is obviously the first post.	2020-08-03 23:36:10.457886-07	37
+9	How to Use a Sling	First, you need to find some money. Second, you go to the Toy Store. Finally, you buy a slingshot.	2020-08-05 20:20:30.980642-07	39
+10	eat my shorts pt1	Eating the shorts of Ithacus.	2020-08-05 20:41:36.022738-07	39
+11	eat thy shorts pt2	thy shorts of ithacus.	2020-08-05 20:42:34.861893-07	39
+12	eat my short pt3	eat thy shorts at the pinnacle of heaven	2020-08-05 20:46:36.093644-07	39
+13	eath thy shorts pt 5	homer is almost home	2020-08-05 20:48:07.796891-07	39
+14	eath they shorts pt 8	i lost pt 6-7 in the ark.	2020-08-05 20:48:56.623081-07	39
+23			2020-08-05 21:18:52.268026-07	39
+24			2020-08-05 21:19:04.085126-07	39
+25	French(?) Fries	I ate some fries today that a human threw away. Pretty tasty, but a bit too salty though. -1 for no ketchup.\n\nRating: 6/10	2020-08-11 19:56:23.647076-07	58
+26	BLT	This evening I had some bacon, lettuce, and tomato. As I have always said, "A healthy diet needs some bacon."\n\nRating: 7/10 for good health	2020-08-11 20:14:55.408049-07	58
+27	After Dinner Snack	Ate some grass. Everyone needs a balance diet. No worms though. Saving those for a special occasion.\n\nRating: 3/10	2020-08-11 20:24:32.237159-07	58
+28	My New Hero	Have you heard of Batman???\n\nWell, I met Batman today. Turns out being a vigilante does not pay well, so he was applying for work at Kwik-E-Mart. I don't think he got the job though because he kept stopping at the alleyway behind the store. Sick car though.	2020-08-11 20:30:33.00466-07	39
+29	Sideshow Bob	Saw Bob today. He was disguised as mailman but forgot to change his shoes. Sent the dog after him.	2020-08-11 21:48:32.924886-07	39
+30	New Nerd at School	Today we got a new transfer student: glasses, answers the teacher's questions, stupid cough, so definitely a nerd.	2020-08-14 19:36:55.749796-07	39
+31	Comic Book Guy	Comic Book Guy showed me his second rarest comic, #2 of Spider-Man.	2020-08-14 19:40:40.683416-07	39
+33	El Barto de Mexico	Today we learned some Spanish. Turned out to be easier than I thought.\n\nEndo.	2020-09-02 21:57:57.787159-07	39
+35	Sideshow Bob pt1	Saw Bob washing his clothes today. Added something special to his detergent.	2020-09-02 22:03:52.332145-07	39
+37	It's Duck Season	It's totally duck season Fudd.	2020-09-02 22:06:19.685001-07	63
+38	Found the Best Carrot	Today I found the best carrot in the world.	2020-09-02 22:15:01.475868-07	63
+39	Bob pt2	Today I saw Bob at the laundromat again. White really isn't his color.	2020-09-02 22:16:40.195713-07	39
+40	Bob pt3	Nvm, forgot what I did today.	2020-09-03 23:05:14.873389-07	39
+41	sdfsadfdasf	dfasfdsafdas	2020-09-03 23:05:42.231143-07	39
+42	Ignore My Previous Post	A video spooked the cat and she jumped on the computer.	2020-09-03 23:26:29.722942-07	39
+43	I Finished...	my comic book collection. I finally found the rare and mythical R Man Issue #2. Turns out that R Man comics were so bad that nobody bought it's next issue.	2020-09-04 23:22:34.820885-07	39
+44	Birthdays	I remember this one birthday when Homer bought me a skateboard. Should have gotten me a slingshot instead.	2020-09-04 23:28:34.541072-07	39
+45	Got New	TBC in the next chapter.	2020-09-04 23:29:17.324472-07	39
+46	Test 55	Maybe it's 54	2020-09-04 23:30:19.931138-07	39
+47	test 45	I'm counting backwards.	2020-09-04 23:31:08.125967-07	39
+48	fsdf	fds	2020-09-04 23:54:12.435092-07	39
+49	Test 23	welp	2020-09-04 23:58:09.32564-07	39
+50	fdsf	fsd	2020-09-04 23:58:52.874746-07	39
+51	fsdf	fdsf	2020-09-04 23:59:35.45772-07	39
+52	test 20	19	2020-09-05 00:00:29.588869-07	39
+53	18	17	2020-09-05 00:00:51.790212-07	39
+54	test 15	14	2020-09-05 00:01:06.493874-07	39
+55	fdsa	fdas	2020-09-05 00:18:15.318511-07	39
+56	tereeedf	fsad	2020-09-05 00:18:51.81585-07	39
+57	test333	test222	2020-09-05 00:19:15.333363-07	39
+58	El Barto de Comicono	Found a library a lot of comics.	2020-09-05 01:50:24.946651-07	65
+59	test 22	ff5	2020-09-05 01:51:27.774472-07	39
+60	tekken is the king	of fights	2020-09-05 01:55:14.921944-07	66
+61	test 31	hope this works	2020-09-05 01:55:41.474197-07	39
+62	Hi, I'm Superman	I guess we're waiting on Bruce.	2020-09-08 19:41:49.471703-07	67
+63	This might be my last Post	So it's time to make a leap of faith.	2020-09-08 23:25:38.962475-07	39
+\.
+
+
+--
+-- Data for Name: session; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.session (sid, sess, expire) FROM stdin;
+\.
+
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.users (user_id, username, password, join_date, flag_writer, flag_admin) FROM stdin;
+1	john111	123	2020-02-03 22:33:22.763949-08	t	f
+18	johnnyboy	$2b$10$VreETSQo2bufphQ2Zfh8POuesHPZtH52Ikewb706tXrQbdh5lPYBy	2020-02-05 06:27:06.418206-08	t	f
+19	nancydrew	$2b$10$oKcfdGktQ86Vec/iEX4njOrnJEXUrcHYBpXHRKfZaw3YWW3siaPCe	2020-02-05 07:08:39.774081-08	t	f
+30	godly111	demonly	2020-08-03 19:59:05.29283-07	t	f
+32	johnnyboy22222	$2b$10$gqE3yabXe7QxK5nDsMWIEOqnuqTdSy8HesVmp5g/.5ZE5f8H0SFqG	2020-08-03 20:27:31.148258-07	t	f
+33	xav2334	$2b$10$f4pKmPAOB338Hqdna6ATc.nJPp9Fx/X3SisKO6JoR48JDbdljjMh6	2020-08-03 20:31:07.536268-07	t	f
+37	blade3344	$2b$10$0UAzHJQwWyzhto73KZt2yOxkoE8fEKLLMiS8MNG6943Pmw5YiOHN.	2020-08-03 22:26:27.407321-07	t	f
+38	homersimpson	$2b$10$ozkmQbi8ZRufdfOhRFe3hewxfcNQf4RELrzK2ctK6EBhQlrfyFkUW	2020-08-04 20:11:30.07936-07	t	f
+39	bartsimpson	$2b$10$MAYFONHtQYnvlO9pnukrjuz.7PesKGUJAAiUEpVFE/7GK1XIGuGuq	2020-08-04 20:13:06.854797-07	t	f
+40	margesimpson	$2b$10$dcaCGfK5m42586jVrAj6Ou1rQ0rxAssqzw50pVcq.d9Cd8AJBGd76	2020-08-04 20:17:42.584047-07	t	f
+41	lisasimpson	$2b$10$0t6sCmh7KmNKE5wji3LgGuo4z.b2qcmhq2CIkfF7.ZbQv8hBV/85.	2020-08-04 20:19:27.851066-07	t	f
+42	thedogsimpsons	$2b$10$z/aSzonwqyNdEeBJdm9cLOOvvNvXA3PP1jj6BHVcLUAy50jxDC61G	2020-08-04 20:20:09.451594-07	t	f
+43	thecatsimpsons	$2b$10$Ks/jVs1Mae9kHbhbKIeonuxhzpbM/r4VKFBo41/zCyIeoC29e62l6	2020-08-04 20:21:01.150474-07	t	f
+44	grandpasimpson	$2b$10$X/BITJce2GmS10U1cen3wOPYYu2TEqouHrdePEA3GqASjCQYUsZU2	2020-08-04 20:21:37.906604-07	t	f
+45	anydaytime	$2b$10$avp2.zh0ZTLrXuO.pIVbl.RrwPrpwOSf8LQEkBvW981jpvBVLRI5m	2020-08-04 20:22:23.390689-07	t	f
+46	adferwr	$2b$10$V732u7OBRW.tBrVOX90b../UNxzb78iBg9ff4vc0VGnXr4U/NLcK2	2020-08-04 20:23:15.263761-07	t	f
+47	fewrwfdsd	$2b$10$rsn3fz7p4NPNYwMiNhLK1uKcy1a2tNQ13Nqsyau6FyouuFvQmKvJe	2020-08-04 20:23:54.822433-07	t	f
+48	erwerfsd	$2b$10$XyjUri5voNac0eH0eks2vuTSLlw2E3mui7FggxGF3.2juYoHYMNUq	2020-08-04 20:31:07.519956-07	t	f
+49	ewrwfdw	$2b$10$xFLQlcLDRx3JCJO47QWT7.Gjx5aFEYZ1V9xZq3xiiC4.RVTLRyVV2	2020-08-04 20:31:45.605016-07	t	f
+50	fesdfew	$2b$10$G/gmFFlF3l/7ODgOGAoRauXuzvQO7/J5A/FoXy1RrXWl6Mw/CLwjG	2020-08-04 20:34:44.649831-07	t	f
+51	ewrwe2342	$2b$10$wlnrtkJ6zZwTiXYOQgzX/uJHD044nwC5a5SOB6bbvwFULdDlavQd.	2020-08-04 20:36:47.632525-07	t	f
+52	fewrw12231	$2b$10$mgoVw6eY6aLJWOpQtcZWX.A7i/PlFceq3.ybAV./7bIBBZKIizh0m	2020-08-04 20:40:57.108239-07	t	f
+53	homersimpson	$2b$10$FcGhVDf94VVNX5e5123PN.HucuxChhTOMYn84qHjrm9QLhs7OAgdW	2020-08-04 20:41:37.554681-07	t	f
+54	homersimpson	$2b$10$tjnmVS0EZzkfdmN07geEeO1r8E8lAba7/hUw9WvVCNXbADfYnib02	2020-08-04 20:42:51.827117-07	t	f
+55	homersimpson	$2b$10$qW0UDK4B80GDSBzKdROlCeVxqEsbjY66qCxSryVQeeZTKubsuFA5y	2020-08-04 20:44:02.475859-07	t	f
+56	homersimpson	$2b$10$atzzxdL6XrJjv8AJ8dxSN.PsD/E.Dbp3jOWj7cRWYfWv9mvtqRHAy	2020-08-04 20:46:00.891712-07	t	f
+57	grandmasimpsom	$2b$10$odC9byOBABrl3lGVWD9LD.btOpXgUutxg1X8FKQZApE4CRkBDV7tO	2020-08-05 20:55:01.016714-07	t	f
+58	pigeon001	$2b$10$6HOdvupnIxK.QgZr7YlJ4uEIgFnApIqdcRkSOaPA6zvrAmpqucKSy	2020-08-11 19:47:53.474255-07	t	f
+59	thedogoftheworld	$2b$10$AlhBkvOSvns8qv5F.4KW.uf9HgDEDn1d4n/kWJfJj6VW/GBtyWcqS	2020-08-19 03:54:02.666873-07	t	f
+60	lisahomer	$2b$10$64sf/vIs94p.GaglpThDhuH1NadJthbO7.x4vJ/QvDFe7v3y7FzRC	2020-09-01 16:38:48.31549-07	t	f
+61	homerjsimpson	$2b$10$ZptzIl6KRfiPuE4V78jY5eq17wgCnxkmqk9k/cE3o49EY8S5nYS7i	2020-09-01 16:39:54.643316-07	t	f
+62	abesimpson	$2b$10$o5.9RnwfV8BwIOC7jDNX8uDOOKzplQATPMEszx.svcdlFuORImS5a	2020-09-01 16:40:24.4883-07	t	f
+63	bunnybugs	$2b$10$zk4.rlKwSs9L81VAAy6rUOobpPRbMwEhFi44YK.5cqVn6FTyDGVz.	2020-09-02 22:05:46.168647-07	t	f
+64	georgesimpson	$2b$10$GzPYfkgrLKhe0oFtziP8XunA8Bp/H5gmxw6g5HfxKyJob7OzLJnym	2020-09-05 00:35:29.513619-07	t	f
+65	bartosimpson	$2b$10$VduZ7ce.zwGINx8IzCQQlOl4MJDPkarX2UlZyncZZnQSJW0IkaDuu	2020-09-05 01:49:39.057087-07	t	f
+66	tekkenking	$2b$10$iW04xmoauFcKrVWYST.SyO1R8wgr.FSVQJ.2.sXBFPonZfHifydIu	2020-09-05 01:54:55.503481-07	t	f
+67	superman33	$2b$10$9x6V1JOhNM800tKwgCsAVuwE088ky5JKmuOiLQ7TEXMQexliYbELO	2020-09-08 19:41:11.465433-07	t	f
+\.
+
+
+--
+-- Name: posts_post_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.posts_post_id_seq', 63, true);
+
+
+--
+-- Name: users_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.users_user_id_seq', 67, true);
+
+
+--
+-- Name: posts posts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.posts
+    ADD CONSTRAINT posts_pkey PRIMARY KEY (post_id, user_id);
+
+
+--
+-- Name: session session_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.session
+    ADD CONSTRAINT session_pkey PRIMARY KEY (sid);
+
+
+--
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (user_id);
+
+
+--
+-- Name: IDX_session_expire; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IDX_session_expire" ON public.session USING btree (expire);
+
+
+--
+-- Name: posts posts_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.posts
+    ADD CONSTRAINT posts_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id);
+
+
+--
+-- PostgreSQL database dump complete
+--
+

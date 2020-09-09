@@ -12,7 +12,8 @@ const saltRounds = 10;
 
 const Controller = require("./Controller");
 
-const db = pgp("postgres://postgres:test123@localhost:5432/blog");
+// const db = pgp("postgres://postgres:test123@localhost:5432/blog");
+const db = pgp(process.env.DATABASE_URL);
 
 const app = express();
 
