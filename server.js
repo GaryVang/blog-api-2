@@ -16,7 +16,7 @@ const Controller = require("./Controller");
 const db = pgp(process.env.DATABASE_URL);
 
 const app = express();
-
+app.set('trust proxy', 1);
 app.use(bodyParser.json());
 // app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 app.use(cors({ credentials: true, origin: "https://blog-frontend-1.herokuapp.com"  }));
