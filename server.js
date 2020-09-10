@@ -44,7 +44,7 @@ app.use(
     cookie: {
       path: "/",
       secure: true,
-      domain: "blog-frontend-1.herokuapp.com",
+      domain: "https://blog-frontend-1.herokuapp.com",
       sameSite: 'none',
       httpOnly: false,
       maxAge: 15 * 60 * 1000, // 15 minutes: min * second * millisecond
