@@ -40,11 +40,11 @@ app.use(
     secret: "catdog",
     saveUninitialized: false,
     resave: false,
-    // proxy: true,
+    proxy: true,
     cookie: {
       path: "/",
       secure: true,
-      domain: "https://blog-frontend-1.herokuapp.com",
+      // domain: "https://blog-frontend-1.herokuapp.com",
       sameSite: 'none',
       httpOnly: false,
       maxAge: 15 * 60 * 1000, // 15 minutes: min * second * millisecond
