@@ -12,22 +12,22 @@ const saltRounds = 10;
 
 const Controller = require("./Controller");
 
-// const db = pgp("postgres://postgres:test123@localhost:5432/blog");
-const db = pgp(process.env.DATABASE_URL);
+const db = pgp("postgres://postgres:test123@localhost:5432/blog");
+// const db = pgp(process.env.DATABASE_URL);
 
 const app = express();
 
 app.use(bodyParser.json());
-// app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
-app.use(cors({ credentials: true, origin: "https://blog-frontend-1.herokuapp.com"  }));
+app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+// app.use(cors({ credentials: true, origin: "https://blog-frontend-1.herokuapp.com"  }));
 
 
 const store = new pgSession({
   pgPromise: db,
 });
 
-app.set('trust proxy', 1);
-app.enable('trust proxy');
+// app.set('trust proxy', 1);
+// app.enable('trust proxy');
 
 app.use(
   session({
@@ -37,14 +37,14 @@ app.use(
     // }),
     store,
     name: "user_sid",
-    // secret: "catdog",
-    secret: process.env.SECRET,
+    secret: "catdog",
+    // secret: process.env.SECRET,
     saveUninitialized: false,
     resave: false,
     proxy: true,
     cookie: {
       path: "/",
-      secure: true,
+      // secure: true,
       // domain: "https://blog-frontend-1.herokuapp.com",
       sameSite: 'none',
       httpOnly: false,
@@ -178,5 +178,5 @@ app.get("/logout", (req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  // console.log(`Server started on Port ${PORT}.`);
+  console.log(`Server started on Port ${PORT}.`);
 });
