@@ -118,7 +118,7 @@ app.get("/auth", (req, res) => {
           .status(200)
           .json({ username: req.session.user, user_id: req.session.user_id });
       } else if (!session) {
-        res.clearCookie("user_sid");
+        res.clearCookie("user_sid", { secure: true, sameSite: "none" });
         req.session.destroy(function (err) {
           if (err) {
             // console.log(err);
@@ -127,7 +127,7 @@ app.get("/auth", (req, res) => {
           }
         });
       } else {
-        res.clearCookie("user_sid");
+        res.clearCookie("user_sid", { secure: true, sameSite: "none" });
         req.session.destroy(function (err) {
           if (err) {
             // console.log(err);
