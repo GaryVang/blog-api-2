@@ -138,7 +138,7 @@ app.get("/auth", (req, res) => {
       }
     });
   } else {
-    res.clearCookie("user_sid", { sameSite: "none" });
+    res.clearCookie("user_sid", { SameSite: "none" });
     req.session.destroy(function (err) {
       if (err) {
         // console.log(err);
