@@ -163,7 +163,7 @@ app.put("/submitPost", sessionChecker, Controller.submitPost(db));
 app.get("/user/:user", Controller.getUser(db));
 
 app.get("/logout", (req, res, next) => {
-  res.clearCookie("user_sid");
+  res.clearCookie("user_sid", { secure: true, sameSite: "none" });
 
   if (req.session.user) {
     req.session.destroy(function (err) {
