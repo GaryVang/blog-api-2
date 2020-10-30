@@ -27,7 +27,7 @@ const getInitial = (db, pgp) => async (req, res) => {
   // HH12 does not order correctly: 12AM > 1AM
   await db
     .any(
-      "SELECT username, post_id, title, body, to_char(post_date, $3) as post_date FROM posts INNER JOIN users ON posts.user_id=users.user_id $4:raw ORDER BY post_date desc LIMIT 5 OFFSET $1",
+      "SELECT username, post_id, title, body, to_char(post_date, $3) as post_date, category_id, posts_categories.name as category_name FROM posts INNER JOIN posts_categories ON posts_categories.cat_id=posts.category_id INNER JOIN users ON posts.user_id=users.user_id $4:raw ORDER BY post_date desc LIMIT 5 OFFSET $1",
       [OFFSET, "second", "YYYY-MM-DD HH12:MI:SS AM (TZ)", where]
     )
     .then((result) => {
@@ -129,7 +129,7 @@ const getPosts = (db, pgp) => (req, res) => {
   const OFFSET = 5 * (req.params.page - 1) || 0;
 
   db.many(
-    "SELECT username, post_id, title, body, to_char(post_date, $3) as post_date FROM posts INNER JOIN users ON posts.user_id=users.user_id $4:raw ORDER BY post_date desc LIMIT 5 OFFSET $1",
+    "SELECT username, post_id, title, body, to_char(post_date, $3) as post_date, category_id, posts_categories.name as category_name FROM posts INNER JOIN posts_categories ON posts_categories.cat_id=posts.category_id INNER JOIN users ON posts.user_id=users.user_id $4:raw ORDER BY post_date desc LIMIT 5 OFFSET $1",
     [OFFSET, "second", "YYYY-MM-DD HH12:MI:SS AM (TZ)", where]
   )
     .then((result) => {
