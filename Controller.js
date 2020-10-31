@@ -146,11 +146,13 @@ const submitPost = (db) => (req, res) => {
   const TITLE = req.body.title;
   const CONTENT = req.body.content;
   const USER_ID = req.body.user_id;
+  const CATEGORY_ID = req.body.category_id;
 
-  db.none("INSERT INTO posts(title, body, user_id) VALUES($1, $2, $3)", [
+  db.none("INSERT INTO posts(title, body, user_id, category_id) VALUES($1, $2, $3, $4)", [
     TITLE,
     CONTENT,
     USER_ID,
+    CATEGORY_ID,
   ])
     .then(() => {
       res
