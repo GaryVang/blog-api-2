@@ -1,6 +1,7 @@
 const getInitial = (db, pgp) => async (req, res) => {
   let postCount;
   let postList;
+  // let categoryList;
   const OFFSET = 5 * (req.params.page - 1) || 0;
 
   let where = "";
@@ -40,6 +41,17 @@ const getInitial = (db, pgp) => async (req, res) => {
         .status(400)
         .json({ status: false, comment: "Error: No blog posts retrieved" });
     });
+
+    //----Category
+    // await db
+    //   .many("SELECT cat_id, name FROM posts_categories")
+    //   .then((result) => {
+    //     categoryList = result;
+    //   })
+    //   .catch((error) => {
+    //     res.status(400).json('Error: DB has no post categories');
+    // });
+    //--------Category End
 
   res.status(200).json({ postList: postList, postCount: postCount });
 };
@@ -146,11 +158,13 @@ const submitPost = (db) => (req, res) => {
   const TITLE = req.body.title;
   const CONTENT = req.body.content;
   const USER_ID = req.body.user_id;
+  const CATEGORY_ID = req.body.category_id;
 
-  db.none("INSERT INTO posts(title, body, user_id) VALUES($1, $2, $3)", [
+  db.none("INSERT INTO posts(title, body, user_id, category_id) VALUES($1, $2, $3, $4)", [
     TITLE,
     CONTENT,
     USER_ID,
+    CATEGORY_ID,
   ])
     .then(() => {
       res
